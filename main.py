@@ -48,7 +48,7 @@ def tokenzie(codeStr):
 
         if isOp(c):
             token = Token(OPERATION)
-            token.m_op = c
+            token.m_var = c
             tokens.append(token)
             curPtr+=1
             print('Op: ' + c)
@@ -101,6 +101,16 @@ def check_op(token):
         raise "bad op"
     return token
 
+def find_end_quote(tokens):
+    cnt = len(tokens)
+
+    for i in range(cnt):
+        if tokens[i].m_var == ")":
+            return i
+
+    raise "end quote not found"
+
+
 def execute_exp(tokens, env):
     primaryToken = tokens[0]
     cnt = len(tokens)
@@ -112,19 +122,28 @@ def execute_exp(tokens, env):
     while ptr < cnt:
         op = check_op(tokens[ptr])
         ptr+=1
-        val = get_token_value(tokens[ptr], env)
-        ptr+=1
-        if op.m_op == "+":
+
+        rightToken = tokens[ptr]
+
+        if rightToken.m_var == "(":
+            endIdx = find_end_quote(tokens[ptr:]) + ptr
+            val = execute_exp(tokens[ptr+1 : endIdx], env)
+            ptr = endIdx+1
+        else:
+            val = get_token_value(tokens[ptr], env)
+            ptr+=1
+        
+        if op.m_var == "+":
             res = execute_add(res, val)
            
-        if op.m_op == "-":
+        if op.m_var == "-":
             res = execute_sub(res, val)
 
     return res
 
 def execute_stmt(tokens, env):
     if tokens[0].m_type == VARIABLE:
-        if tokens[1].m_op == "=":
+        if tokens[1].m_var == "=":
             val = execute_exp(tokens[2:], env)
             execute_assign(tokens[0].m_var, val, env)
 
