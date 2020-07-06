@@ -137,6 +137,7 @@ codeStr = crlf
 codeStr += "aaa = 100 + 200 + 300;" + crlf
 codeStr += "bbb = 1000 - aaa - 100;" + crlf
 codeStr += "ccc = aaa + bbb;" + crlf
+codeStr += "ddd = ccc + (200 - 100);" + crlf
 
 print(codeStr)
 

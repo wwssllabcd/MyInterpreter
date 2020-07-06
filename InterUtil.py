@@ -41,16 +41,16 @@ def isSpecial(c):
         return True
     return False
 
+def check_none(value):
+    if value == None:
+        raise " bad value"
+    return value
+
 def get_env_value(variable, env):
-    res = env[variable]
-    if res == None:
-        print("get_env_value: error bad value = " + variable)
-    return res
+    return check_none(env[check_none(variable)])
 
 def set_env_value(variable, value, env):
-    if value == None:
-        print("set_env_value: error bad value = " + variable)
-    env[variable] = value
+    env[check_none(variable)] = check_none(value)
 
 def execute_add(left, value):
     return left + value
