@@ -111,45 +111,53 @@ def find_end_quote(tokens):
     raise "end quote not found"
 
 
+#BNF:
+# primary:     "(" expressionn ")" | NUMBER | IDENTIFY | STRING
+# factor:      "-" primary | primary  
+# expression:  factor { op factor }
+
+def execute_primary(tokens, env):
+    token = tokens[0]
+    if token.m_var == "(":
+        endIdx = find_end_quote(tokens[0:])
+        return execute_exp(tokens[1 : endIdx], env)
+    return get_token_value(token, env), tokens[1:]
+
+def execute_factor(tokens, env):
+    token = tokens[0]
+    if token.m_var == "-":
+        val, move = execute_primary(tokens[1:], env) 
+        return (0 - val), move
+    return execute_primary(tokens, env)
+
 def execute_exp(tokens, env):
-    primaryToken = tokens[0]
+    res, tokens = execute_factor(tokens, env)
     cnt = len(tokens)
-    if cnt == 1:
-        return get_token_value(primaryToken, env)
+    if cnt == 0:
+        return res, tokens
 
-    res = get_token_value(primaryToken, env)
-    ptr = 1
-    while ptr < cnt:
-        op = check_op(tokens[ptr])
-        ptr+=1
-
-        rightToken = tokens[ptr]
-
-        if rightToken.m_var == "(":
-            endIdx = find_end_quote(tokens[ptr:]) + ptr
-            val = execute_exp(tokens[ptr+1 : endIdx], env)
-            ptr = endIdx+1
-        else:
-            val = get_token_value(tokens[ptr], env)
-            ptr+=1
-        
+    while len(tokens):
+        op = check_op(tokens[0])
+        val, tokens = execute_factor(tokens[1:], env)
         if op.m_var == "+":
             res = execute_add(res, val)
            
         if op.m_var == "-":
             res = execute_sub(res, val)
 
-    return res
+    return res, tokens
 
 def execute_stmt(tokens, env):
     if tokens[0].m_type == VARIABLE:
         if tokens[1].m_var == "=":
-            val = execute_exp(tokens[2:], env)
+            val, tmp = execute_exp(tokens[2:], env)
             execute_assign(tokens[0].m_var, val, env)
+            tokens = tmp
 
 def execute(stmts, env):
     for stmt in stmts:
         execute_stmt(stmt, env)
+
 
 crlf = "\r\n"
 codeStr = crlf

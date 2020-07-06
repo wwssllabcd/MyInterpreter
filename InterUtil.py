@@ -47,10 +47,13 @@ def check_none(value):
     return value
 
 def get_env_value(variable, env):
-    return check_none(env[check_none(variable)])
+    check_none(variable)
+    return env[variable]
 
 def set_env_value(variable, value, env):
-    env[check_none(variable)] = check_none(value)
+    check_none(value)
+    check_none(variable)
+    env[variable] = value
 
 def execute_add(left, value):
     return left + value
