@@ -120,7 +120,8 @@ def execute_primary(tokens, env):
     token = tokens[0]
     if token.m_var == "(":
         endIdx = find_end_quote(tokens[0:])
-        return execute_exp(tokens[1 : endIdx], env)
+        res, token = execute_exp(tokens[1 : endIdx], env)
+        return res, tokens[endIdx+1:]
     return get_token_value(token, env), tokens[1:]
 
 def execute_factor(tokens, env):
@@ -162,9 +163,14 @@ def execute(stmts, env):
 crlf = "\r\n"
 codeStr = crlf
 codeStr += "aaa = 100 + 200 + 300;" + crlf
-codeStr += "bbb = 1000 - aaa - 100;" + crlf
-codeStr += "ccc = aaa + bbb;" + crlf
-codeStr += "ddd = ccc + (200 - 100);" + crlf
+codeStr += "bbb = 1000 - 400 - 100;" + crlf
+codeStr += "ccc = (1000 - 200) + 100;" + crlf
+codeStr += "ddd = 1000 - (200 + 100);" + crlf
+codeStr += "eee = 1000 - (200 - 100);" + crlf
+
+#codeStr += "eee = aaa + bbb;" + crlf
+
+
 
 print(codeStr)
 
@@ -174,3 +180,14 @@ env = {}
 execute(stmts, env)
 
 print(env)
+
+if env["aaa"] != 600:
+    print("error in aaa = ", env["aaa"])
+if env["bbb"] != 500:
+    print("error in bbb = ", env["bbb"])
+if env["ccc"] != 900:
+     print("error in ccc = ", env["ccc"])
+if env["ddd"] != 700:
+     print("error in ddd = ", env["ddd"])
+if env["eee"] != 900:
+     print("error in eee = ", env["eee"])
