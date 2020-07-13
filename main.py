@@ -8,7 +8,6 @@ VARIABLE = 1
 OPERATION = 2
 EXPRESS = 3
 
-
 class Token:
     def __init__(self, type):
         self.m_type = type
@@ -16,7 +15,6 @@ class Token:
         self.m_var = None
         self.m_op = None
         self.m_exp = None
-
 
 def tokenzie(codeStr):
     codeCnt = len(codeStr)
@@ -57,9 +55,7 @@ def tokenzie(codeStr):
             continue
 
         curPtr += 1
-
     return tokens
-
 
 def statementzie(codeStr):
     curPtr = 0
@@ -82,7 +78,6 @@ def statementzie(codeStr):
 
     return statement
 
-
 def get_token_value(var, env):
     res = 0
     if var.m_type == NUMBER:
@@ -93,74 +88,70 @@ def get_token_value(var, env):
     if res == None:
         print("get_token_value: error bad var")
         print(var)
-
     return res
-
 
 def execute_assign(variable, value, env):
     set_env_value(variable, value, env)
-
 
 def check_op(token):
     if token.m_type != OPERATION:
         raise "bad op"
     return token
 
-
 def find_end_quote(tokens):
     cnt = len(tokens)
-
     for i in range(cnt):
         if tokens[i].m_var == ")":
             return i
-
     raise "end quote not found"
 
 
-# BNF:
-# primary:     "(" expressionn ")" | NUMBER | IDENTIFY | STRING
-# factor:      "-" primary | primary
-# expression:  factor { op factor }
+# EBNF:
+# factor:     number | "(" expression ")" 
+# term:       factor { ( "*" | "/" )  factor }
+# expression: term { ( "+" | "-" )  term }
 
-def execute_primary(tokens, env):
+def factor(tokens, env):
     token = tokens[0]
     if token.m_var == "(":
         endIdx = find_end_quote(tokens[0:])
-        res, token = execute_exp(tokens[1: endIdx], env)
+        res, token = expression(tokens[1: endIdx], env)
         return res, tokens[endIdx+1:]
     return get_token_value(token, env), tokens[1:]
 
-
-def execute_factor(tokens, env):
-    token = tokens[0]
-    if token.m_var == "-":
-        val, move = execute_primary(tokens[1:], env)
-        return (0 - val), move
-    return execute_primary(tokens, env)
-
-
-def execute_exp(tokens, env):
-    res, tokens = execute_factor(tokens, env)
-    cnt = len(tokens)
-    if cnt == 0:
-        return res, tokens
-
+def term(tokens, env):
+    left, tokens = factor(tokens, env)
     while len(tokens):
         op = check_op(tokens[0])
-        val, tokens = execute_factor(tokens[1:], env)
+        if op.m_var == "*":
+            right, tokens = term(tokens[1:], env)
+            left = execute_mul(left, right)
+        elif  op.m_var == "\\":
+            right, tokens = term(tokens[1:], env)
+            left = execute_div(left, right)
+        else:
+            break
+    return left, tokens
+
+def expression(tokens, env):
+    left, tokens = term(tokens, env)
+    while len(tokens):
+        op = check_op(tokens[0])
         if op.m_var == "+":
-            res = execute_add(res, val)
-
-        if op.m_var == "-":
-            res = execute_sub(res, val)
-
-    return res, tokens
+            right, tokens = term(tokens[1:], env)
+            left = execute_add(left, right)
+        elif op.m_var == "-":
+            right, tokens = term(tokens[1:], env)
+            left = execute_sub(left, right)
+        else:
+            break
+    return left, tokens
 
 
 def execute_stmt(tokens, env):
     if tokens[0].m_type == VARIABLE:
         if tokens[1].m_var == "=":
-            val, tmp = execute_exp(tokens[2:], env)
+            val, tmp = expression(tokens[2:], env)
             execute_assign(tokens[0].m_var, val, env)
             tokens = tmp
 
@@ -169,7 +160,7 @@ def execute(stmts, env):
     for stmt in stmts:
         execute_stmt(stmt, env)
 
-def add_code_phase_1():
+def code_add():
     crlf = "\r\n"
     codeStr = ""
     codeStr += "add1 = 100 + 200 + 300;" + crlf
@@ -179,7 +170,7 @@ def add_code_phase_1():
     codeStr += "add5 = 1000 - (200 - 100);" + crlf
     return codeStr
 
-def test_phase_1(env):
+def test_code_add(env):
     if env["add1"] != 600:
         print("error in add1 = ", env["add1"])
     if env["add2"] != 500:
@@ -191,15 +182,43 @@ def test_phase_1(env):
     if env["add5"] != 900:
         print("error in add5 = ", env["add5"])
 
+def code_multi():
+    crlf = "\r\n"
+    codeStr = crlf
+    codeStr += "multi_01 = 2 * 3;" + crlf
+    codeStr += "multi_02 = 2 * 3 + 4;" + crlf
+    codeStr += "multi_03 = 2 + 3 * 4;" + crlf
+    codeStr += "multi_04 = (2 + 3) * 4;" + crlf
+    codeStr += "multi_05 = 2 + (3 * 4);" + crlf
+    codeStr += "multi_06 = 2 + (3 * 4) + 5;" + crlf
+    return codeStr
+
+def test_code_multi(env):
+    if env["multi_01"] != 6:
+        print("error in multi_01 = ", env["multi_01"])
+    if env["multi_02"] != 10:
+        print("error in multi_02 = ", env["multi_02"])
+    if env["multi_03"] != 14:
+        print("error in multi_03 = ", env["multi_03"])
+    if env["multi_04"] != 20:
+        print("error in multi_04 = ", env["multi_04"])
+    if env["multi_05"] != 14:
+        print("error in multi_05 = ", env["multi_05"])
+    if env["multi_06"] != 19:
+        print("error in multi_06 = ", env["multi_06"])
+
+
+
+def test_code(env):
+    test_code_add(env)
+    test_code_multi(env)
+
+
 
 crlf = "\r\n"
 codeStr = crlf
-codeStr += add_code_phase_1()
-
-
-#codeStr += "eee = aaa + bbb;" + crlf
-
-
+codeStr += code_add()
+codeStr += code_multi()
 print(codeStr)
 
 stmts = statementzie(codeStr)
@@ -209,4 +228,4 @@ execute(stmts, env)
 
 print(env)
 
-test_phase_1(env)
+test_code(env)

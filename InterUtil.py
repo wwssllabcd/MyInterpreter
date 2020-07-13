@@ -61,6 +61,12 @@ def execute_add(left, value):
 def execute_sub(left, value):
     return left - value
 
+def execute_mul(left, value):
+    return left * value
+
+def execute_div(left, value):
+    return left / value
+
 def get_number_string(codeStr, startPos):
     cnt = len(codeStr)
     curPtr = startPos
@@ -82,6 +88,9 @@ def get_variable_string(codeStr, startPos):
             continue
 
         if isChar(c) == True:
+            curPtr +=1
+            continue
+        if c == "_":
             curPtr +=1
             continue
         break
