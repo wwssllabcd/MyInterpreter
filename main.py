@@ -1,8 +1,8 @@
 # Python tutorial
 # https://docs.python.org/3/index.html
 
-from InterUtil import *
-from TestCode import *
+from inter_util import *
+from test_code import *
 
 NUMBER = 0
 VARIABLE = 1
