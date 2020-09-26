@@ -1,7 +1,7 @@
 # Python tutorial
 # https://docs.python.org/3/index.html
 
-from inter_util import *
+from inter_utility import *
 from test_code import *
 
 NUMBER = 0
@@ -127,7 +127,7 @@ def term(tokens, env):
         if op.m_var == "*":
             right, tokens = term(tokens[1:], env)
             left = execute_mul(left, right)
-        elif  op.m_var == "\\":
+        elif  op.m_var == "/":
             right, tokens = term(tokens[1:], env)
             left = execute_div(left, right)
         else:
@@ -149,7 +149,7 @@ def expression(tokens, env):
     return left, tokens
 
 
-def execute_stmt(tokens, env):
+def statement(tokens, env):
     if tokens[0].m_type == VARIABLE:
         if tokens[1].m_var == "=":
             val, tmp = expression(tokens[2:], env)
@@ -159,7 +159,7 @@ def execute_stmt(tokens, env):
 
 def execute(stmts, env):
     for stmt in stmts:
-        execute_stmt(stmt, env)
+        statement(stmt, env)
 
 def pre_test():
     env = {}
@@ -176,6 +176,8 @@ def pre_test():
 
 pre_test()
 
+
+code = " var = 1 + 2 * 4 + 2/ 2"
 
 
 
