@@ -30,7 +30,7 @@ def isOp(c):
         return True
     return False
 
-def isSpecial(c):
+def isAsciiCtrlChar(c):
     if c == "\r":
         return True
     if c == "\n":

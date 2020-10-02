@@ -1,83 +1,10 @@
 # Python tutorial
 # https://docs.python.org/3/index.html
 
-from inter_utility import *
-from test_code import *
-
-NUMBER = 0
-VARIABLE = 1
-OPERATION = 2
-EXPRESS = 3
-
-class Token:
-    def __init__(self, type):
-        self.m_type = type
-        self.m_num = None
-        self.m_var = None
-        self.m_op = None
-        self.m_exp = None
-
-def tokenzie(codeStr):
-    codeCnt = len(codeStr)
-    curPtr = 0
-    tokens = []
-    while curPtr < codeCnt:
-        c = codeStr[curPtr]
-
-        if isDigital(c):
-            token = Token(NUMBER)
-            numStr = get_number_string(codeStr, curPtr)
-
-            token.m_num = int(numStr)
-            length = len(numStr)
-
-            tokens.append(token)
-            curPtr += length
-
-            print('Digi: ' + str(token.m_num))
-            continue
-
-        if isChar(c):
-            token = Token(VARIABLE)
-            token.m_var = get_variable_string(codeStr, curPtr)
-            length = len(token.m_var)
-            tokens.append(token)
-            curPtr += length
-
-            print('var: ' + token.m_var)
-            continue
-
-        if isOp(c):
-            token = Token(OPERATION)
-            token.m_var = c
-            tokens.append(token)
-            curPtr += 1
-            print('Op: ' + c)
-            continue
-
-        curPtr += 1
-    return tokens
-
-def statementzie(codeStr):
-    curPtr = 0
-    statement = []
-    codeCnt = len(codeStr)
-    while curPtr < codeCnt:
-
-        if isSpecial(codeStr[curPtr]):
-            curPtr += 1
-            continue
-
-        end = codeStr.find(";", curPtr)
-        code = codeStr[curPtr:end]
-
-        print("=== proc: " + code)
-
-        res = tokenzie(code)
-        statement.append(res)
-        curPtr = end+1
-
-    return statement
+from InterUtility import *
+from TestCode import *
+from TokenCode import *
+from Statement import *
 
 def get_token_value(var, env):
     res = 0
@@ -163,21 +90,19 @@ def execute(stmts, env):
 
 def pre_test():
     env = {}
-    execute(statementzie(code_add()), env)
+    execute(statementize(code_add()), env)
     test_code_add(env)
     print(env)
 
     env = {}
-    execute(statementzie(code_multi()), env)
+    execute(statementize(code_multi()), env)
     test_code_multi(env)
     print(env)
 
+if __name__ == "__main__":
+    pre_test()
 
 
-pre_test()
-
-
-code = " var = 1 + 2 * 4 + 2/ 2"
 
 
 
