@@ -14,7 +14,7 @@ def statementize(codeString):
     codeCnt = len(codeString)
     while curPtr < codeCnt:
 
-        if isAsciiCtrlChar(codeString[curPtr]):
+        if is_ascii_ctrl_char(codeString[curPtr]):
             curPtr += 1
             continue
         

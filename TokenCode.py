@@ -22,7 +22,7 @@ def tokenize(codeStr):
     while curPtr < codeCnt:
         c = codeStr[curPtr]
 
-        if isDigital(c):
+        if is_digital(c):
             token = Token(NUMBER)
             numStr = get_number_string(codeStr, curPtr)
 
@@ -35,7 +35,7 @@ def tokenize(codeStr):
             print('Digi: ' + str(token.m_num))
             continue
 
-        if isChar(c):
+        if is_char(c):
             token = Token(VARIABLE)
             token.m_var = get_variable_string(codeStr, curPtr)
             length = len(token.m_var)
@@ -45,7 +45,7 @@ def tokenize(codeStr):
             print('var: ' + token.m_var)
             continue
 
-        if isOp(c):
+        if is_op(c):
             token = Token(OPERATION)
             token.m_var = c
             tokens.append(token)

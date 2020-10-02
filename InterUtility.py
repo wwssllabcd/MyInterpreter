@@ -1,19 +1,19 @@
 
 
-def isDigital(c):
+def is_digital(c):
     if ord('0') <= ord(c) <= ord('9'):
         return True
     
     return False
 
-def isChar(c):
+def is_char(c):
     if ord('A') <= ord(c) <= ord('Z'):
         return True
     if ord('a') <= ord(c) <= ord('z'):
         return True
     return False
 
-def isOp(c):
+def is_op(c):
     if c == "=":
         return True
     if c == "+":
@@ -30,7 +30,7 @@ def isOp(c):
         return True
     return False
 
-def isAsciiCtrlChar(c):
+def is_ascii_ctrl_char(c):
     if c == "\r":
         return True
     if c == "\n":
@@ -72,7 +72,7 @@ def get_number_string(codeStr, startPos):
     curPtr = startPos
     while curPtr < cnt:
         c = codeStr[curPtr]
-        if isDigital(c) == False:
+        if is_digital(c) == False:
             break
         curPtr +=1
 
@@ -83,11 +83,11 @@ def get_variable_string(codeStr, startPos):
     curPtr = startPos
     while curPtr < cnt:
         c = codeStr[curPtr]
-        if isDigital(c) == True:
+        if is_digital(c) == True:
             curPtr +=1
             continue
 
-        if isChar(c) == True:
+        if is_char(c) == True:
             curPtr +=1
             continue
         if c == "_":
