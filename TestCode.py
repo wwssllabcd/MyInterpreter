@@ -30,6 +30,7 @@ def code_multi():
     codeStr += "multi_04 = (2 + 3) * 4;" + crlf
     codeStr += "multi_05 = 2 + (3 * 4);" + crlf
     codeStr += "multi_06 = 2 + (3 * 4) + 5;" + crlf
+    codeStr += "multi_07 = 2 + (3 * ( 4 + 6 ) ) - 2;" + crlf
     return codeStr
 
 def test_code_multi(env):
@@ -45,3 +46,5 @@ def test_code_multi(env):
         print("error in multi_05 = ", env["multi_05"])
     if env["multi_06"] != 19:
         print("error in multi_06 = ", env["multi_06"])
+    if env["multi_07"] != 30:
+        print("error in multi_07 = ", env["multi_07"])

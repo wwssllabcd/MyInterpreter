@@ -23,7 +23,7 @@ def check_op(token):
         raise "bad op"
     return token
 
-def find_end_quote(tokens):
+def find_rignt_brackets(tokens):
     cnt = len(tokens)
     for i in range(cnt):
         if tokens[i].m_var == ")":
@@ -39,7 +39,7 @@ def find_end_quote(tokens):
 def factor(tokens, env):
     token = tokens[0]
     if token.m_var == "(":
-        endIdx = find_end_quote(tokens[0:])
+        endIdx = find_rignt_brackets(tokens[0:])
         res, token = expression(tokens[1: endIdx], env)
         return res, tokens[endIdx+1:]
     return get_token_value(token, env), tokens[1:]
@@ -73,12 +73,18 @@ def expression(tokens, env):
     return left, tokens
 
 
-def statement(tokens, env):
+def is_assignment(tokens, env):
     if tokens[0].m_type == VARIABLE:
         if tokens[1].m_var == "=":
-            val, tmp = expression(tokens[2:], env)
-            execute_assign(tokens[0].m_var, val, env)
-            tokens = tmp
+            return True
+    return False
+    
+
+def statement(tokens, env):
+    if is_assignment(tokens, env):
+        val, tmp = expression(tokens[2:], env)
+        execute_assign(tokens[0].m_var, val, env)
+        tokens = tmp
 
 
 def execute(stmts, env):
