@@ -55,6 +55,9 @@ def set_env_value(variable, value, env):
     check_none(variable)
     env[variable] = value
 
+def execute_assign(variable, value, env):
+    set_env_value(variable, value, env)
+    
 def execute_add(left, value):
     return left + value
 
