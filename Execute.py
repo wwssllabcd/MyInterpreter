@@ -26,8 +26,9 @@ def check_op(token):
 def find_rignt_brackets(tokens):
     cnt = len(tokens)
     for i in range(cnt):
-        if tokens[i].m_var == ")":
-            return i
+        idx = cnt -1 - i
+        if tokens[idx].m_var == ")":
+            return idx
     raise "end quote not found"
 
 
