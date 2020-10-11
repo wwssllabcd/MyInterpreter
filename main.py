@@ -3,7 +3,7 @@
 
 from TestCode import *
 from Statement import *
-from Execute import *
+from Parser import *
 
 def pre_test():
     env = {}
