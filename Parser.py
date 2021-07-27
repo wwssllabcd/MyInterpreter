@@ -43,12 +43,11 @@ def expression(tokens, env):
             break
     return left, tokens
 
-def statement(tokens, env):
+def statement(stmt, env):
+
+    tokens = tokenize(stmt)
+
     if is_assignment(tokens, env):
         val, tmp = expression(tokens[2:], env)
         execute_assign(tokens[0].m_var, val, env)
         tokens = tmp
-
-def execute(stmts, env):
-    for stmt in stmts:
-        statement(stmt, env)
