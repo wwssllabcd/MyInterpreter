@@ -7,13 +7,17 @@ from Execute import *
 
 def pre_test():
     env = {}
-    execute(code_add(), env)
-    test_code_add(env)
+    code, answers = code_add()
+    execute(code, env)
+    test_answers(answers, env)
+
+
     print(env)
 
     env = {}
-    execute(code_multi(), env)
-    test_code_multi(env)
+    code, answers = code_multi()
+    execute(code, env)
+    test_answers(answers, env)
     print(env)
 
 if __name__ == "__main__":

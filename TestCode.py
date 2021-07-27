@@ -1,3 +1,4 @@
+from InterUtility import *
 
 def code_add():
     crlf = "\r\n"
@@ -6,20 +7,26 @@ def code_add():
     codeStr += "add2 = 1000 - 400 - 100;" + crlf
     codeStr += "add3 = (1000 - 200) + 100;" + crlf
     codeStr += "add4 = 1000 - (200 + 100);" + crlf
-    codeStr += "add5 = 1000 - (200 - 100);" + crlf
-    return codeStr
+    codeStr += "add5 = 500 - (200 - 100);" + crlf
 
-def test_code_add(env):
-    if env["add1"] != 600:
-        print("error in add1 = ", env["add1"])
-    if env["add2"] != 500:
-        print("error in add2 = ", env["add2"])
-    if env["add3"] != 900:
-        print("error in add3 = ", env["add3"])
-    if env["add4"] != 700:
-        print("error in add4 = ", env["add4"])
-    if env["add5"] != 900:
-        print("error in add5 = ", env["add5"])
+    res = []
+    res.append(["add1" , 600])
+    res.append(["add2" , 500])
+    res.append(["add3" , 900])
+    res.append(["add4" , 700])
+    res.append(["add5" , 400])
+
+
+    return codeStr, res
+
+def test_answers(answers, env):
+    for ans in answers:
+        var = ans[0]
+        predict = ans[1]
+        exeVal = get_env_value(var, env)
+        if predict != exeVal:
+            print("VarName: {}, predict={}, but result={}".format(var, predict, exeVal))
+            raise
 
 def code_multi():
     crlf = "\r\n"
@@ -31,20 +38,14 @@ def code_multi():
     codeStr += "multi_05 = 2 + (3 * 4);" + crlf
     codeStr += "multi_06 = 2 + (3 * 4) + 5;" + crlf
     codeStr += "multi_07 = 2 + (3 * ( 4 + 6 ) ) - 2;" + crlf
-    return codeStr
 
-def test_code_multi(env):
-    if env["multi_01"] != 6:
-        print("error in multi_01 = ", env["multi_01"])
-    if env["multi_02"] != 10:
-        print("error in multi_02 = ", env["multi_02"])
-    if env["multi_03"] != 14:
-        print("error in multi_03 = ", env["multi_03"])
-    if env["multi_04"] != 20:
-        print("error in multi_04 = ", env["multi_04"])
-    if env["multi_05"] != 14:
-        print("error in multi_05 = ", env["multi_05"])
-    if env["multi_06"] != 19:
-        print("error in multi_06 = ", env["multi_06"])
-    if env["multi_07"] != 30:
-        print("error in multi_07 = ", env["multi_07"])
+    res = []
+    res.append(["multi_01" , 6])
+    res.append(["multi_02" , 10])
+    res.append(["multi_03" , 14])
+    res.append(["multi_04" , 20])
+    res.append(["multi_05" , 14])
+    res.append(["multi_06" , 19])
+    res.append(["multi_07" , 30])
+
+    return codeStr, res

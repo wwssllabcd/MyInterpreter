@@ -1,6 +1,7 @@
 
 from InterUtility import *
 from TokenCode import *
+from ExpressionPredict import *
 
 # EBNF:
 # factor:     number | "(" expression ")" 
@@ -44,5 +45,6 @@ def expression_old(tokens, env):
     return left, tokens
 
 def expression(tokens, env):   
-    left, tokens = expression_old(tokens, env)
-    return left
+    res, tokens = expression_old(tokens, env)
+    #res = expression_predict(tokens, env)
+    return res
