@@ -1,6 +1,7 @@
 
 from InterUtility import *
 from TokenCode import *
+from Expression import *
 
 def end_of_assign_pos(codeString, curPtr):
     end = codeString.find(";", curPtr)
@@ -26,3 +27,12 @@ def statementize(codeString):
 
         curPtr = end+1
     return stmts
+
+def statement_exec(stmt, env):
+
+    tokens = tokenize(stmt)
+
+    if is_assignment(tokens, env):
+        val = expression(tokens[2:], env)
+        execute_assign(tokens[0].m_var, val, env)
+

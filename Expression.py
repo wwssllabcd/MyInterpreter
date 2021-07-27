@@ -11,7 +11,7 @@ def factor(tokens, env):
     token = tokens[0]
     if token.m_var == "(":
         endIdx = find_rignt_brackets(tokens[0:])
-        res, token = expression(tokens[1: endIdx], env)
+        res, token = expression_old(tokens[1: endIdx], env)
         return res, tokens[endIdx+1:]
     return get_token_value(token, env), tokens[1:]
 
@@ -29,7 +29,7 @@ def term(tokens, env):
             break
     return left, tokens
 
-def expression(tokens, env):
+def expression_old(tokens, env):
     left, tokens = term(tokens, env)
     while len(tokens):
         op = check_op(tokens[0])
@@ -43,11 +43,6 @@ def expression(tokens, env):
             break
     return left, tokens
 
-def statement(stmt, env):
-
-    tokens = tokenize(stmt)
-
-    if is_assignment(tokens, env):
-        val, tmp = expression(tokens[2:], env)
-        execute_assign(tokens[0].m_var, val, env)
-        tokens = tmp
+def expression(tokens, env):   
+    left, tokens = expression_old(tokens, env)
+    return left
