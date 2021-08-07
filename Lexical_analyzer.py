@@ -19,6 +19,7 @@ class Token:
     def __init__(self, type):
         self.type = type
         self.value = None
+        self.opPri = None
         self.brackTokenCnt = None
         self.line = None
         self.col = None
@@ -60,6 +61,12 @@ def get_one_token(code):
     if opc != None:
         token = Token(TokenType.OP)
         token.value = opc
+
+        if token.value == "+" or token.value == "-":
+            token.opPri = 1
+
+        if token.value == "*" or token.value == "/":
+            token.opPri = 2
         return token
 
     if is_digital(c):
@@ -134,3 +141,21 @@ def lexical_analyzer(codeStr):
         col+=pos
 
     return tokens
+
+
+def get_token_value(token, env):
+    res = 0
+    if token.type == TokenType.NUMBER:
+        res = int(token.value)
+    else:
+        res = get_env_value(token.value, env)
+
+    if res == None:
+        print("get_token_value: error bad var")
+        print(token)
+    return res
+
+def remove_first_and_last_element(list):
+    list.pop(0)
+    list.pop()
+    return list

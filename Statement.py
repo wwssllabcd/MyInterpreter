@@ -1,63 +1,5 @@
 from Lexical_analyzer import *
-
-# EBNF:
-# factor:       number | "(" expression ")" 
-# term:         factor { ( "*" | "/" )  factor }
-# add_expr:     term { ( "+" | "-" )  term }
-# comp_expr:    add_expr { ( ">" | "<" | ">=" | "<=" )  add_expr }
-
-def get_token_value(token, env):
-    res = 0
-    if token.type == TokenType.NUMBER:
-        res = int(token.value)
-    else:
-        res = get_env_value(token.value, env)
-
-    if res == None:
-        print("get_token_value: error bad var")
-        print(token)
-    return res
-
-def check_op(token):
-    if token.type != TokenType.OP:
-        raise "bad op"
-    return token
-
-def factor(tokens, env):
-    token = tokens[0]
-    if token.value == "(":
-        endIdx = find_symmetry_element(tokens[0:], "(", ")")
-        res, token = expression(tokens[1: endIdx], env)
-        return res, tokens[endIdx+1:]
-    return get_token_value(token, env), tokens[1:]
-
-def term(tokens, env):
-    left, tokens = factor(tokens, env)
-    while len(tokens):
-        op = check_op(tokens[0])
-        if op.value == "*":
-            right, tokens = term(tokens[1:], env)
-            left = execute_mul(left, right)
-        elif  op.value == "/":
-            right, tokens = term(tokens[1:], env)
-            left = execute_div(left, right)
-        else:
-            break
-    return left, tokens
-
-def expression(tokens, env):
-    left, tokens = term(tokens, env)
-    while len(tokens):
-        op = check_op(tokens[0])
-        if op.value == "+":
-            right, tokens = term(tokens[1:], env)
-            left = execute_add(left, right)
-        elif op.value == "-":
-            right, tokens = term(tokens[1:], env)
-            left = execute_sub(left, right)
-        else:
-            break
-    return left, tokens
+from Expression import *
 
 def get_expr_tokens_by_semicolon(tokens):
     expr = []
@@ -71,10 +13,7 @@ def get_tokens_and_offset(tokens, startSymbol, endSymbol):
     tokens = get_tokens_in_bracket(tokens, startSymbol, endSymbol)
     return tokens, len(tokens)
 
-def remove_first_and_last_element(list):
-    list.pop(0)
-    list.pop()
-    return list
+
 
 
 def check_token(token, value):
@@ -133,25 +72,27 @@ def get_assign_token(tokens):
     offset += len(expr) + 1
     return variable, expr, offset
 
-def execute_statement_LL1(tokens, env):
+def execute_statement(tokens, env):
     cnt = len(tokens)
     i=0
     while i < cnt:
         t0 = tokens[i]
         if t0.type == TokenType.IDENTIFY:
             variable, expr, offset = get_assign_token(tokens[i:])
-            value, tmp = expression(expr, env)
+            value = expression(expr, env)
             set_env_value(variable.value, value, env)
             i += offset
             continue
 
         if t0.value == "if":
             condition, stmtTrue, stmtFalse, offset = get_if_token(tokens[i:])
-            if( expression(condition) ):
-                execute_statement_LL1(stmtTrue)
+            if( expression(condition, env) ):
+                execute_statement(stmtTrue)
             else:
                 if stmtFalse != None:
-                    execute_statement_LL1(stmtFalse)
+                    execute_statement(stmtFalse)
             i += offset
             
-            
+
+def statement(tokens, env):
+    execute_statement(tokens, env)

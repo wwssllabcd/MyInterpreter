@@ -1,7 +1,9 @@
 
 from Lexical_analyzer import *
-from Parser import *
+from Statement import *
 from InterUtility import *
+
+
 
 def convert_to_int(tokens):
     for t in tokens:
@@ -33,6 +35,6 @@ def pre_execute(tokens):
 def execute_code(code, env):
     tokens = lexical_analyzer(code)
     print_tokens(tokens)
-    parser_tokens(pre_execute(tokens), env)
+    statement(pre_execute(tokens), env)
 
 
