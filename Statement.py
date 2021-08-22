@@ -35,9 +35,8 @@ def get_parentheses_stmt(tokens):
     return get_stmt_in_brack(tokens, "(", ")")
     
 def get_if_token(tokens):
-    # skip "if" token
-    offset = 1
-
+    offset = 0
+    
     condi_expr, nextOffset = get_parentheses_stmt(tokens[offset:])
     offset += nextOffset
 
@@ -45,6 +44,7 @@ def get_if_token(tokens):
     offset += nextOffset
         
     toeknElse = tokens[offset]
+    toeknElseNext = tokens[offset+1]
     
     if_stmts_false = None
     if toeknElse.value == "else":
@@ -83,6 +83,7 @@ def execute_statement(tokens, env):
             continue
 
         if t0.value == "if":
+            i+=1
             condition, stmtTrue, stmtFalse, offset = get_if_token(tokens[i:])
             if( expression(condition, env) ):
                 execute_statement(stmtTrue, env)

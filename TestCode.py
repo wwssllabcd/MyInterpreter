@@ -59,7 +59,7 @@ def code_multi():
     return codeStr, res
 
 
-def code_condition():
+def code_if_condition():
     crlf = "\r\n"
     codeStr = crlf
     res = []
@@ -68,6 +68,12 @@ def code_condition():
     codeStr += "cond_stmts_res_1 = 0;" + crlf
     codeStr += "if (condi < 100) { cond_stmts_res_1 = 20 + 10*2; } else { cond_stmts_res_2 = 30/5 - 1; }" + crlf
     res.append(["cond_stmts_res_1" , 40])
-    #res.append(["cond_stmts_res_2" , 5])
+    
+    codeStr += "if (condi > 100) { cond_stmts_res_2 = 20 + 10*2; } else { cond_stmts_res_2 = 30/5 - 1; }" + crlf
+    res.append(["cond_stmts_res_2" , 5])
+
+    # codeStr += "if (condi > 100) { cond_stmts_res_3 = 20 + 10*2; } else if (condi < 100) { cond_stmts_res_3 = 33; } else { cond_stmts_res_3 = 30/5 - 1; }" + crlf
+    # res.append(["cond_stmts_res_3" , 33])
+   
 
     return codeStr, res

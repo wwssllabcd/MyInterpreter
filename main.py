@@ -8,7 +8,7 @@ def pre_test():
     testFunColls = [
         #code_add, 
         #code_multi,
-        code_condition
+        code_if_condition
     ]
 
     for fun in testFunColls:
