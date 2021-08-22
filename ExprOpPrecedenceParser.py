@@ -17,6 +17,15 @@ def do_op(lvalue, op, rvalue):
     if op.value == "/":
         return lvalue / rvalue
 
+    if op.value == "<":
+        return lvalue < rvalue
+    
+    if op.value == ">":
+        return lvalue < rvalue
+
+    if op.value == "==":
+        return lvalue < rvalue
+
     raise "op not support = {}".format(op.value)
 
 def expression_one_unit(tokens, env):

@@ -66,8 +66,8 @@ def code_condition():
 
     codeStr += "condi = 10;" + crlf
     codeStr += "cond_stmts_res_1 = 0;" + crlf
-    codeStr += "if (condi < 100) { cond_stmts_res_1 = 20 + 10*2; } else { cond_stmts_res_1 = 30/5 - 1; }" + crlf
+    codeStr += "if (condi < 100) { cond_stmts_res_1 = 20 + 10*2; } else { cond_stmts_res_2 = 30/5 - 1; }" + crlf
     res.append(["cond_stmts_res_1" , 40])
-    res.append(["cond_stmts_res_2" , 4])
+    #res.append(["cond_stmts_res_2" , 5])
 
     return codeStr, res

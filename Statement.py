@@ -20,6 +20,17 @@ def check_token(token, value):
     if token.value != value:
         raise "wrong token, should be " + value
 
+def get_brack_stmt(tokens):
+    toeknBrack = tokens[0]
+
+    check_token(toeknBrack, "{")
+    lastTokenOffset = toeknBrack.brackTokenCnt-1
+    check_token(tokens[lastTokenOffset], "}")
+
+    stmt = tokens[0: toeknBrack.brackTokenCnt]
+    stmt = remove_first_and_last_element(stmt)
+    return stmt, toeknBrack.brackTokenCnt
+
 def get_if_token(tokens):
     # skip "if" token
     offset = 1
@@ -32,31 +43,23 @@ def get_if_token(tokens):
 
     #move to if_stmt
     offset += t1.brackTokenCnt
-  
-    t2 = tokens[offset]
-    check_token(t2, "{")
 
-    if_stmts_true = tokens[offset: offset + t2.brackTokenCnt]
-    if_stmts_true = remove_first_and_last_element(if_stmts_true)
-
+    if_stmts_true, nextOffset = get_brack_stmt(tokens[offset:])
 
     #move next
-    offset += t2.brackTokenCnt
+    offset += nextOffset
         
     toeknElse = tokens[offset]
     
     if_stmts_false = None
-    if toeknElse.value != "else":
+    if toeknElse.value == "else":
         offset += 1
 
-        t3 = tokens[offset]
-        check_token(t3, "{")
-
-        if_stmts_false = tokens[offset: offset + t3.brackTokenCnt]
-        if_stmts_false = remove_first_and_last_element(if_stmts_false)
+        if_stmts_false, nextOffset = get_brack_stmt(tokens[offset:])
 
         #move next
-        offset += t3.brackTokenCnt
+        offset += nextOffset
+        
     return condi_expr, if_stmts_true, if_stmts_false, offset
 
 def get_assign_token(tokens):
@@ -87,10 +90,10 @@ def execute_statement(tokens, env):
         if t0.value == "if":
             condition, stmtTrue, stmtFalse, offset = get_if_token(tokens[i:])
             if( expression(condition, env) ):
-                execute_statement(stmtTrue)
+                execute_statement(stmtTrue, env)
             else:
                 if stmtFalse != None:
-                    execute_statement(stmtFalse)
+                    execute_statement(stmtFalse, env)
             i += offset
             
 
