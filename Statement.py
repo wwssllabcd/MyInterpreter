@@ -31,22 +31,25 @@ def get_brack_stmt(tokens):
     stmt = remove_first_and_last_element(stmt)
     return stmt, toeknBrack.brackTokenCnt
 
+def get_parentheses(tokens):
+    token = tokens[0]
+    check_token(token, "(")
+    lastTokenOffset = token.brackTokenCnt-1
+    check_token(tokens[lastTokenOffset], ")")
+
+    stmt = tokens[0: token.brackTokenCnt]
+    stmt = remove_first_and_last_element(stmt)
+    return stmt, token.brackTokenCnt
+
+    
 def get_if_token(tokens):
     # skip "if" token
     offset = 1
 
-    t1 = tokens[offset]
-    check_token(t1, "(")
-
-    condi_expr = tokens[offset: offset + t1.brackTokenCnt]
-    condi_expr = remove_first_and_last_element(condi_expr)
-
-    #move to if_stmt
-    offset += t1.brackTokenCnt
+    condi_expr, nextOffset = get_parentheses(tokens[offset:])
+    offset += nextOffset
 
     if_stmts_true, nextOffset = get_brack_stmt(tokens[offset:])
-
-    #move next
     offset += nextOffset
         
     toeknElse = tokens[offset]
