@@ -13,40 +13,32 @@ def get_tokens_and_offset(tokens, startSymbol, endSymbol):
     tokens = get_tokens_in_bracket(tokens, startSymbol, endSymbol)
     return tokens, len(tokens)
 
-
-
-
 def check_token(token, value):
     if token.value != value:
         raise "wrong token, should be " + value
 
-def get_brack_stmt(tokens):
+def get_stmt_in_brack(tokens, startSymbol, endSymbol):
     toeknBrack = tokens[0]
 
-    check_token(toeknBrack, "{")
+    check_token(toeknBrack, startSymbol)
     lastTokenOffset = toeknBrack.brackTokenCnt-1
-    check_token(tokens[lastTokenOffset], "}")
+    check_token(tokens[lastTokenOffset], endSymbol)
 
     stmt = tokens[0: toeknBrack.brackTokenCnt]
     stmt = remove_first_and_last_element(stmt)
     return stmt, toeknBrack.brackTokenCnt
 
-def get_parentheses(tokens):
-    token = tokens[0]
-    check_token(token, "(")
-    lastTokenOffset = token.brackTokenCnt-1
-    check_token(tokens[lastTokenOffset], ")")
+def get_brack_stmt(tokens):
+    return get_stmt_in_brack(tokens, "{", "}")
 
-    stmt = tokens[0: token.brackTokenCnt]
-    stmt = remove_first_and_last_element(stmt)
-    return stmt, token.brackTokenCnt
-
+def get_parentheses_stmt(tokens):
+    return get_stmt_in_brack(tokens, "(", ")")
     
 def get_if_token(tokens):
     # skip "if" token
     offset = 1
 
-    condi_expr, nextOffset = get_parentheses(tokens[offset:])
+    condi_expr, nextOffset = get_parentheses_stmt(tokens[offset:])
     offset += nextOffset
 
     if_stmts_true, nextOffset = get_brack_stmt(tokens[offset:])

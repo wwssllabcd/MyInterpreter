@@ -21,10 +21,10 @@ def do_op(lvalue, op, rvalue):
         return lvalue < rvalue
     
     if op.value == ">":
-        return lvalue < rvalue
+        return lvalue > rvalue
 
     if op.value == "==":
-        return lvalue < rvalue
+        return lvalue == rvalue
 
     raise "op not support = {}".format(op.value)
 
