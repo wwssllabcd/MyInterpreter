@@ -83,12 +83,15 @@ def is_tab(c):
 
 def check_none(value):
     if value == None:
-        raise " bad value"
+        raise " bad var/val"
     return value
 
-def get_env_value(variable, env):
-    check_none(variable)
-    return env[variable]
+def get_env_value(var, env):
+    check_none(var)
+    value = env.get(var)
+    if value == None:
+        raise " var not found"
+    return value
 
 def set_env_value(variable, value, env):
     check_none(value)

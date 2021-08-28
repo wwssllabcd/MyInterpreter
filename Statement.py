@@ -1,6 +1,19 @@
 from Lexical_analyzer import *
 from Expression import *
 
+class PatternType(Enum):
+
+    STMT = auto()
+    IF_CONDI = auto()
+    ELSE = auto()
+    
+class Pattern:
+    def __init__(self, type, value, nextOffset):
+        self.type = type
+        self.value = value
+        self.nextOffset = nextOffset
+
+
 def get_expr_tokens_by_semicolon(tokens):
     expr = []
     for token in tokens:
@@ -34,28 +47,67 @@ def get_brack_stmt(tokens):
 def get_parentheses_stmt(tokens):
     return get_stmt_in_brack(tokens, "(", ")")
     
-def get_if_token(tokens):
-    offset = 0
-    
-    condi_expr, nextOffset = get_parentheses_stmt(tokens[offset:])
+def get_if_pattern(tokens, env):
+    #move to next
+    pattern = []
+
+    offset = 1
+    condi, nextOffset = get_parentheses_stmt(tokens[offset:])
     offset += nextOffset
+    pattern.append(Pattern(PatternType.IF_CONDI, condi, nextOffset))
 
-    if_stmts_true, nextOffset = get_brack_stmt(tokens[offset:])
+    stmt, nextOffset = get_brack_stmt(tokens[offset:])
     offset += nextOffset
-        
-    toeknElse = tokens[offset]
-    toeknElseNext = tokens[offset+1]
-    
-    if_stmts_false = None
-    if toeknElse.value == "else":
-        offset += 1
+    pattern.append(Pattern(PatternType.STMT, stmt, nextOffset))
 
-        if_stmts_false, nextOffset = get_brack_stmt(tokens[offset:])
+    tokenLen = len(tokens)
+    while(1):
 
-        #move next
+        if offset >= tokenLen:
+            return pattern, offset
+
+        curToken = tokens[offset]
+        if curToken.value != "else" and curToken.value  != "else if":
+            return pattern, offset
+       
+        if curToken.value == "else if":
+            offset+=1
+            condi, nextOffset = get_parentheses_stmt(tokens[offset:])
+            offset += nextOffset
+            pattern.append(Pattern(PatternType.IF_CONDI, condi, nextOffset))
+
+        elif curToken.value == "else":
+            nextOffset = 1
+            offset += nextOffset
+            pattern.append(Pattern(PatternType.ELSE, None, nextOffset))
+
+        stmt, nextOffset = get_brack_stmt(tokens[offset:])
         offset += nextOffset
-        
-    return condi_expr, if_stmts_true, if_stmts_false, offset
+        pattern.append(Pattern(PatternType.STMT, stmt, nextOffset))
+
+def execute_if_pattern(patterns, env):
+    offset = 0
+
+    size = len(patterns)
+    while(1):
+        if offset >= size:
+            return 
+
+        condi = patterns[offset]
+
+        if condi.type == PatternType.IF_CONDI:
+            if( expression(condi.value, env) ):
+                stmt = patterns[offset+1]
+                execute_statement(stmt.value, env)
+                return 
+            offset+=2
+            continue
+        elif condi.type == PatternType.ELSE:
+            stmt = patterns[offset+1]
+            execute_statement(stmt.value, env)
+            return 
+        else:
+            raise "if_pattern: wrong pattern"
 
 def get_assign_token(tokens):
     offset = 0
@@ -70,6 +122,7 @@ def get_assign_token(tokens):
     offset += len(expr) + 1
     return variable, expr, offset
 
+
 def execute_statement(tokens, env):
     cnt = len(tokens)
     i=0
@@ -83,13 +136,8 @@ def execute_statement(tokens, env):
             continue
 
         if t0.value == "if":
-            i+=1
-            condition, stmtTrue, stmtFalse, offset = get_if_token(tokens[i:])
-            if( expression(condition, env) ):
-                execute_statement(stmtTrue, env)
-            else:
-                if stmtFalse != None:
-                    execute_statement(stmtFalse, env)
+            if_pattern, offset = get_if_pattern(tokens[i:], env)
+            execute_if_pattern(if_pattern, env)
             i += offset
             
 

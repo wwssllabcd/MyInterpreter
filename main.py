@@ -6,8 +6,8 @@ from Execute import *
 
 def pre_test():
     testFunColls = [
-        #code_add, 
-        #code_multi,
+        code_add, 
+        code_multi,
         code_if_condition
     ]
 
